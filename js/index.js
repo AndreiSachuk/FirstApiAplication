@@ -2,17 +2,42 @@ const navigation = document.querySelector("#navigation")
 const main = document.querySelector("#main")
 const modal = document.querySelector("#exampleModal")
 
-
 let requestURL = 'https://swapi.dev/api/people/?page=1'
-
-
 
 let count = 0;
 let peoples = [];
 let pages = 0;
 let pageSelected = 1;
 
+document.addEventListener('click', function(event) {
 
+  console.log(peoples)
+   for (let i=0; i<peoples.length; i++){
+     if (event.path[0].id === `btn-${i}`)
+      modal.innerHTML =
+      `
+      <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">${peoples[i].name}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                Gender: ${peoples[i].gender} <br>
+                Mass: ${peoples[i].mass} <br>
+                Birth year: ${peoples[i].birth_year} <br>
+                Scin color: ${peoples[i].skin_color} <br>
+                Created: ${peoples[i].created} <br>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+      `
+   }
+
+});
 
 navigation.onclick = function (event) {
     currentSelected = event.path[1].innerText;
@@ -25,8 +50,6 @@ navigation.onclick = function (event) {
     requestURL = `https://swapi.dev/api/people/?page=${pageSelected}`
     updatePage()
 }
-
-
 
 function sendRequest(method, url) {
     return fetch(url).then(response => response.json())
