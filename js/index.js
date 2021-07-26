@@ -52,14 +52,16 @@ navigation.onclick = function (event) {
       pageSelected = 1;
   }
   else pageSelected = currentSelected;
-  console.log(pageSelected)
-  requestURL = `https://swapi.dev/api/people/?page=${pageSelected}`
+  if (flag ==='search')
+    requestURL = `https://swapi.dev/api/people/?search=${inputSearch.value}&page=${pageSelected}`
+  else requestURL = `https://swapi.dev/api/people/?page=${pageSelected}`
   updatePage()
 }
 
 
 search.onclick = function (event) {
   requestURL = `https://swapi.dev/api/people/?search=${inputSearch.value}`
+  flag = 'search';
   updatePage()
 }
 
@@ -73,7 +75,8 @@ function updatePage() {
   sendRequest('GET', requestURL)
     .then(data => {
       peoples = data.results
-      count = +data.count
+      count = data.count
+      console.log(count)
       cards()
       pagination()
     })
@@ -83,6 +86,7 @@ function updatePage() {
 function pagination() {
   navigation.innerHTML = ""
   pages = Math.ceil(count / 10)
+  console.log(pages)
   navigation.innerHTML += `<li class="page-item"><a class="page-link" href="#" tabindex="-1" aria-disabled="true" id="minus">Previous</a></li>`
   for (let i = 1; i < pages + 1; i++)
     navigation.innerHTML += `<li class="page-item" id="page-${(i)}"><a class="page-link" href="#">${(i)}</a></li>`
