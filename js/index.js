@@ -10,6 +10,7 @@ let count = 0;
 let peoples = [];
 let pages = 0;
 let pageSelected = 1;
+let flag;
 
 document.addEventListener('click', function (event) {
   for (let i = 0; i < peoples.length; i++) {
