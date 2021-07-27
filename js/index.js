@@ -41,7 +41,6 @@ document.addEventListener('click', function (event) {
 
 navigation.onclick = function (event) {
   currentSelected = event.path[1].innerText;
-  console.log(currentSelected)
   if (currentSelected === "Previous") {
     pageSelected--
     if (pageSelected < 1)
@@ -62,7 +61,7 @@ navigation.onclick = function (event) {
 
 search.onclick = function (event) {
   pageSelected = 1;
-  requestURL = `https://swapi.dev/api/people/?search=${inputSearch.value}`
+  requestURL = `https://swapi.dev/api/people/?search=${inputSearch.value}&page=1`
   flag = 'search';
   updatePage()
 }
@@ -89,7 +88,7 @@ function updatePage() {
       cards()
       pagination()
     })
-    .catch(err => console.log(err))
+    .catch(err => console.err(err))
 }
 
 function pagination() {
@@ -101,7 +100,6 @@ function pagination() {
   navigation.innerHTML += `<li class="page-item"><a class="page-link" href="#" tabindex="+1" aria-disabled="true" id="plus">Next</a></li>`
   let liSet = document.querySelector(`#page-${pageSelected}`)
   liSet.classList.add('active')
-  console.log(`${pages}`);
   if (liSet.innerText === '1')
     navigation.firstChild.classList.add('disabled')
   if (liSet.innerText === `${pages}`)
