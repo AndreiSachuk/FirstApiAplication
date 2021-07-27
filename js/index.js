@@ -45,12 +45,12 @@ navigation.onclick = function (event) {
   if (currentSelected === "Previous") {
     pageSelected--
     if (pageSelected < 1)
-      pageSelected = pages
+      pageSelected = 1
   }
   else if (currentSelected === "Next") {
     pageSelected++
     if (pageSelected > pages)
-      pageSelected = 1;
+      pageSelected = pages;
   }
   else pageSelected = currentSelected;
   if (flag ==='search')
@@ -61,6 +61,7 @@ navigation.onclick = function (event) {
 
 
 search.onclick = function (event) {
+  pageSelected = 1;
   requestURL = `https://swapi.dev/api/people/?search=${inputSearch.value}`
   flag = 'search';
   updatePage()
@@ -73,11 +74,18 @@ function sendRequest(method, url) {
 updatePage()
 
 function updatePage() {
+  main.classList = "text-center"
+  main.innerHTML = 
+    `<div class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="sr-only"></span>
+    </div>
+  </div>`
   sendRequest('GET', requestURL)
     .then(data => {
+      main.classList = "row row-cols-1 row-cols-md-2 row-cols-xl-5 text-center g-3 m-3"
       peoples = data.results
       count = data.count
-      console.log(count)
       cards()
       pagination()
     })
@@ -87,13 +95,17 @@ function updatePage() {
 function pagination() {
   navigation.innerHTML = ""
   pages = Math.ceil(count / 10)
-  console.log(pages)
   navigation.innerHTML += `<li class="page-item"><a class="page-link" href="#" tabindex="-1" aria-disabled="true" id="minus">Previous</a></li>`
   for (let i = 1; i < pages + 1; i++)
     navigation.innerHTML += `<li class="page-item" id="page-${(i)}"><a class="page-link" href="#">${(i)}</a></li>`
   navigation.innerHTML += `<li class="page-item"><a class="page-link" href="#" tabindex="+1" aria-disabled="true" id="plus">Next</a></li>`
   let liSet = document.querySelector(`#page-${pageSelected}`)
   liSet.classList.add('active')
+  console.log(`${pages}`);
+  if (liSet.innerText === '1')
+    navigation.firstChild.classList.add('disabled')
+  if (liSet.innerText === `${pages}`)
+    navigation.lastChild.classList.add('disabled')
 }
 
 function cards() {
