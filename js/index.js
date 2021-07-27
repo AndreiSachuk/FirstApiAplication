@@ -14,28 +14,31 @@ let flag;
 
 document.addEventListener('click', function (event) {
   for (let i = 0; i < peoples.length; i++) {
-    if (event.path[0].id === `btn-${i}`)
-      modal.innerHTML =
-        `
-      <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">${peoples[i].name}</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                Gender: ${peoples[i].gender} <br>
-                Mass: ${peoples[i].mass} <br>
-                Birth year: ${peoples[i].birth_year} <br>
-                Scin color: ${peoples[i].skin_color} <br>
-                Created: ${peoples[i].created} <br>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    if (event.path[0].id === `btn-${i}`) 
+      sendRequest('GET', `${peoples[i].url}`)
+        .then(peopleDescription => {
+          modal.innerHTML =
+          `
+        <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">${peopleDescription.name}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                  Gender: ${peopleDescription.gender} <br>
+                  Mass: ${peopleDescription.mass} <br>
+                  Birth year: ${peopleDescription.birth_year} <br>
+                  Scin color: ${peopleDescription.skin_color} <br>
+                  Created: ${peopleDescription.created} <br>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
                 </div>
               </div>
-            </div>
-      `
+        `
+        })
   }
 });
 
@@ -52,7 +55,7 @@ navigation.onclick = function (event) {
       pageSelected = pages;
   }
   else pageSelected = currentSelected;
-  if (flag ==='search')
+  if (flag === 'search')
     requestURL = `https://swapi.dev/api/people/?search=${inputSearch.value}&page=${pageSelected}`
   else requestURL = `https://swapi.dev/api/people/?page=${pageSelected}`
   updatePage()
@@ -74,7 +77,7 @@ updatePage()
 
 function updatePage() {
   main.classList = "text-center"
-  main.innerHTML = 
+  main.innerHTML =
     `<div class="text-center">
     <div class="spinner-border" role="status">
       <span class="sr-only"></span>
