@@ -14,13 +14,14 @@ let flag;
 
 updatePage()
 
-document.addEventListener('click', function (event) {
-  for (let i = 0; i < peoples.length; i++) {
-    if (event.path[0].id === `btn-${i}`) 
-      sendRequest('GET', `${peoples[i].url}`)
-        .then(peopleDescription => {
-          modal.innerHTML =
-          `
+main.addEventListener('click', function (event) {
+  if (event.target.innerText === "More information") {
+    for (let i = 0; i < peoples.length; i++) {
+      if (event.path[0].id === `btn-${i}`)
+        sendRequest(`${peoples[i].url}`)
+          .then(peopleDescription => {
+            modal.innerHTML =
+              `
           <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -40,7 +41,8 @@ document.addEventListener('click', function (event) {
                   </div>
                 </div>
         `
-        })
+          })
+    }
   }
 });
 
@@ -64,14 +66,15 @@ navigation.onclick = function (event) {
 }
 
 search.addEventListener('click', function (event) {
-  pageSelected = 1;
+  pageSelected = 1
   requestURL = `https://swapi.dev/api/people/?search=${inputSearch.value}&page=1`
   flag = 'search'
+  event.preventDefault()
   updatePage()
 }
 )
 
-function sendRequest(method, url) {
+function sendRequest(url) {
   return fetch(url).then(response => response.json())
 }
 
@@ -83,7 +86,7 @@ function updatePage() {
            <span class="sr-only"></span>
         </div>
       </div>`
-  sendRequest('GET', requestURL)
+  sendRequest(requestURL)
     .then(data => {
       main.classList = "row row-cols-1 row-cols-md-2 row-cols-xl-5 text-center g-3 m-3"
       peoples = data.results
@@ -103,53 +106,40 @@ function pagination() {
   navigation.innerHTML += `<li class="page-item"><a class="page-link" href="#" tabindex="+1" aria-disabled="true" id="plus">Next</a></li>`
   let liSet = document.querySelector(`#page-${pageSelected}`)
   liSet.classList.add('active')
-  if (liSet.innerText === '1')
-    navigation.firstChild.classList.add('disabled')
-  if (liSet.innerText === `${pages}`)
-    navigation.lastChild.classList.add('disabled')
+  if (liSet.innerText === '1') {
+    navigation.firstChild.classList.add('d-none')
+  }
+  if (liSet.innerText === `${pages}`) {
+    navigation.lastChild.classList.add('d-none')
+  }
 }
 
 function cards() {
+  let imgLink = "";
   main.innerHTML = ""
   for (let i = 0; i < peoples.length; i++) {
-    if (peoples[i].gender === "male") {
+    switch (peoples[i].gender) {
+      case "male":
+        imgLink = `<img src="https://for-male.ru/wp-content/uploads/2020/11/stilnyj-muzhchina.jpg" class="card-img-top" style="height: 400px" alt="male"></img>`
+        break;
+      case "female":
+        imgLink = `<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG4vSyA2zSAm16XDEF3i8SDAZw6tHQUY2ixA&usqp=CAU" style="height: 400px" class="card-img-top" alt="female">`
+        break;
+      default:
+        imgLink = `<img src="https://im.kommersant.ru/Issues.photo/CORP/2019/07/23/KMO_111307_25942_1_t222_135708.jpg" style="height: 400px" class="card-img-top" alt="robot"></img>`
+        break;
+    }
       main.innerHTML +=
         `<li class="col page-item">
-            <div class="card h-100">
-              <img src="https://for-male.ru/wp-content/uploads/2020/11/stilnyj-muzhchina.jpg" class="card-img-top" alt="male">
-              <div class="card-body">
-                <h5 class="card-title">${peoples[i].name}</h5>
+            <div class="card h-100 ">
+            ${imgLink}
+              <div class="card-body ">
+                <h5 class="card-title ">${peoples[i].name}</h5>
                 <p class="card-text">mass: ${peoples[i].mass}</p>
-                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" id="btn-${i}">More information</a>
+                <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal" id="btn-${i}">More information</a>
               </div>
             </div>
           </li>`
-    } else
-      if (peoples[i].gender === "female") {
-        main.innerHTML +=
-          `<li class="col page-item">
-            <div class="card h-100">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG4vSyA2zSAm16XDEF3i8SDAZw6tHQUY2ixA&usqp=CAU" class="card-img-top" alt="female">
-              <div class="card-body">
-                <h5 class="card-title">${peoples[i].name}</h5>
-                <p class="card-text">mass: ${peoples[i].mass}</p>
-                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" id="btn-${i}">More information</a>
-              </div>
-            </div>
-          </li>`
-      } else {
-        main.innerHTML +=
-          `<li class="col page-item">
-            <div class="card h-100">
-            <img src="https://im.kommersant.ru/Issues.photo/CORP/2019/07/23/KMO_111307_25942_1_t222_135708.jpg" class="card-img-top" alt="robot">
-              <div class="card-body">
-                <h5 class="card-title">${peoples[i].name}</h5>
-                <p class="card-text">mass: ${peoples[i].mass}</p>
-                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" id="btn-${i}">More information</a>
-              </div>
-            </div>
-          </li>`
-      }
   }
 }
 
